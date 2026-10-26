@@ -166,6 +166,15 @@ footer{padding:40px 0 24px;font-size:13px;color:#bdbdbd;text-align:left;backgrou
   .coupon{padding:40px 22px}
 }
 </style>
+<!-- Amplitude (프로젝트 ID: 887066) -->
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
+<script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script>
+<script>
+  window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));
+  window.amplitude.init('a14ca395be7ad9d5eaa2e852cad6dbdb', {
+    autocapture: { pageViews: true, sessions: true, formInteractions: true, fileDownloads: true, elementInteractions: true }
+  });
+</script>
 </head>
 <body>
 
