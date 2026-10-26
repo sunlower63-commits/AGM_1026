@@ -196,7 +196,7 @@ footer{padding:40px 0 24px;font-size:13px;color:#bdbdbd;text-align:left;backgrou
       <p>집 근처 30분 거리 베테랑 육아 경력자 선생님이<br>등하원부터 신나는 놀이돌봄까지! 지금 가입하면 <b>첫 돌봄 무료체험</b>을 드려요.</p>
       <div class="cta-row">
         <a href="#download" class="btn" data-cta="hero">무료체험 받고 앱 시작하기 →</a>
-        <a href="#packages" class="btn ghost">패키지 혜택 보기</a>
+        <a href="#packages" class="btn ghost" data-cta="hero-packages">패키지 혜택 보기</a>
       </div>
       <div class="trust">
         <span>✅ <b>7단계 검증</b> 통과 선생님</span>
@@ -448,13 +448,28 @@ footer{padding:40px 0 24px;font-size:13px;color:#bdbdbd;text-align:left;backgrou
   boxes.forEach(function(b){b.addEventListener('change',upd)});
 })();
 
-// 전환 추적 훅: GA/픽셀 연동 시 이 함수 안에 이벤트 전송 코드 추가
-document.querySelectorAll('[data-cta]').forEach(function(el){
-  el.addEventListener('click',function(){
-    // 예) gtag('event','cta_click',{location:el.dataset.cta});
-    console.log('cta_click', el.dataset.cta);
+// Amplitude CTA 추적: 노출(cta_impression, 50% 이상 보일 때 페이지당 1회) / 클릭(cta_click)
+(function(){
+  function track(name, el){
+    if (!window.amplitude) return;
+    window.amplitude.track(name, {
+      cta_id: el.dataset.cta,
+      cta_text: el.textContent.trim(),
+      store: el.dataset.store || undefined
+    });
+  }
+  var seen = {};
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var id = e.target.dataset.cta;
+      if (e.isIntersecting && !seen[id]) { seen[id] = true; track('cta_impression', e.target); io.unobserve(e.target); }
+    });
+  }, {threshold: 0.5}) : null;
+  document.querySelectorAll('[data-cta]').forEach(function(el){
+    if (io) io.observe(el);
+    el.addEventListener('click', function(){ track('cta_click', el); });
   });
-});
+})();
 </script>
 </body>
 </html>
